@@ -1,5 +1,11 @@
+
+# Maintained Fork
+
+This is a maintained fork of Edit-Spinner with fixes for modern Gradle/JitPack compatibility.
+
 # EditSpinner
-An EditText which supports spinner FOR `API LEVEL >= 11`
+
+An EditText which supports spinner FOR `API LEVEL >= 14`
 
 <div><img src='https://github.com/xyxyLiu/Edit-Spinner/blob/master/art/demo.gif' width="400px" style='border: #f1f1f1 solid 1px'/></div>
 
@@ -10,15 +16,14 @@ An EditText which supports spinner FOR `API LEVEL >= 11`
 <br>
 
 ## Gradle Dependency
-[ ![Download](https://api.bintray.com/packages/tonyreginald/maven/EditSpinner/images/download.svg) ](https://bintray.com/tonyreginald/maven/EditSpinner/_latestVersion)
 ```groovy
 repositories {
     ...
-    jcenter()
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
-    implementation 'com.reginald:editspinner:1.1.0'
+    implementation 'com.github.nilesh-lohar:edit-spinner:2.0.0'
 }
 ````
 

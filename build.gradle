@@ -3,29 +3,31 @@
 buildscript {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.4.1'
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
+        classpath 'com.android.tools.build:gradle:7.4.2'
     }
 }
 
 ext {
-    compileSdkVersion = 28
-    buildToolsVersion = "28.0.3"
-    minSdkVersion = 11
+    compileSdkVersion = 33
+    minSdkVersion = 14
+    targetSdkVersion = 33
     DEBUG_LOG = "false"
 }
 
 allprojects {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
 }
 
 task clean(type: Delete) {
     delete rootProject.buildDir
+}
+
+task install {
+    dependsOn ':editspinner:publishReleasePublicationToMavenLocal'
 }

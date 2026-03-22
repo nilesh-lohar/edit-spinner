@@ -1,12 +1,21 @@
 apply plugin: 'com.android.library'
+apply plugin: 'maven-publish'
+
+def cliProperties = gradle.startParameter.projectProperties
+def publishedGroupId = cliProperties['group'] ?: PROJ_GROUP
+def publishedVersion = cliProperties['version'] ?: PROJ_VERSION
+def publishedArtifactId = cliProperties['artifactId'] ?: rootProject.name
+
+group = publishedGroupId
+version = publishedVersion
 
 android {
+    namespace 'com.reginald.editspinner'
     compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion 28
+        targetSdkVersion rootProject.ext.targetSdkVersion
 
         buildConfigField("boolean", "DEBUG_LOG", rootProject.ext.DEBUG_LOG)
     }
@@ -16,10 +25,71 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 }
 
-apply from: '../gradle/bintray-push.gradle'
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.java.srcDirs
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += files(android.getBootClasspath().join(File.pathSeparator))
+    options.encoding = 'UTF-8'
+    options.charSet = 'UTF-8'
+    options.addStringOption('Xdoclint:none', '-quiet')
+    failOnError false
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                groupId = publishedGroupId
+                artifactId = publishedArtifactId
+                version = publishedVersion
+
+                artifact("$buildDir/outputs/aar/${project.name}-release.aar") {
+                    builtBy bundleReleaseAar
+                }
+                artifact sourcesJar
+                artifact javadocJar
+
+                pom.withXml {
+                    def root = asNode()
+                    root.appendNode('name', PROJ_NAME)
+                    root.appendNode('description', PROJ_DESCRIPTION)
+                    root.appendNode('url', PROJ_WEBSITEURL)
+
+                    def licensesNode = root.appendNode('licenses')
+                    def licenseNode = licensesNode.appendNode('license')
+                    licenseNode.appendNode('name', 'The Apache Software License, Version 2.0')
+                    licenseNode.appendNode('url', 'http://www.apache.org/licenses/LICENSE-2.0.txt')
+
+                    def developersNode = root.appendNode('developers')
+                    def developerNode = developersNode.appendNode('developer')
+                    developerNode.appendNode('id', DEVELOPER_ID)
+                    developerNode.appendNode('name', DEVELOPER_NAME)
+                    developerNode.appendNode('email', DEVELOPER_EMAIL)
+
+                    def scmNode = root.appendNode('scm')
+                    scmNode.appendNode('url', PROJ_WEBSITEURL)
+                    scmNode.appendNode('connection', PROJ_VCSURL)
+                }
+            }
+        }
+    }
+}

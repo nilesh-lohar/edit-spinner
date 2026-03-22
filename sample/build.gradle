@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
+    namespace 'com.reginald.editspinner.sample'
     compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion 28
+        targetSdkVersion rootProject.ext.targetSdkVersion
         applicationId "com.reginald.editspinner.sample"
         versionCode 1
         versionName "1.0"
@@ -17,11 +17,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support:appcompat-v7:23.0.1'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
 //    implementation 'com.reginald:editspinner:1.1.0'
     implementation project(':editspinner')
 }

@@ -1,0 +1,3 @@
+jdk: openjdk17
+install:
+  - ./gradlew clean :editspinner:publishReleasePublicationToMavenLocal --no-daemon
